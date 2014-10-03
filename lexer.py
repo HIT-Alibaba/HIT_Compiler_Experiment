@@ -34,7 +34,7 @@ def getchar():
         return 'SCANEOF'
     return input_str[current_line][current_pos]
     
-def unchar():
+def ungetc():
     global current_pos
     global current_line
     current_pos = current_pos - 1
@@ -65,7 +65,7 @@ def scanner():
             current_char = getchar()
         
         if current_char != '.':
-            unchar()
+            ungetc()
             return ('INT', int_value)
         
         float_value = int_value
@@ -75,14 +75,14 @@ def scanner():
             float_value = float_value + int(current_char) / d
             d = d * 10
             current_char = getchar()
-        unchar()
+        ungetc()
         return ('FLOAT', float_value)
     if current_char.isalpha():
         string = ''
         while current_char.isalpha():
             string += current_char
             current_char = getchar()
-        unchar()
+        ungetc()
         if is_keyword(string):
             return ('KEYWORD', string)
         else:
@@ -94,7 +94,7 @@ def scanner():
         while is_operator(current_char):
             op += current_char
             current_char = getchar()
-        unchar()
+        ungetc()
         return ('OP', op)
     else:
         lexical_error('unknown character')
