@@ -7,7 +7,7 @@ KEYWORD_LIST = ['if', 'else', 'while', 'break', 'continue', 'for', 'double', 'in
         
 SEPARATOR_LIST = ['{', '}', '[', ']', '(', ')', '~', ',', ';', '.', '#', '?', ':']
 
-OPERATOR_LIST = ['+', '++', '-', '--', '*', '/', '>', '<', '>=', '<=', '=', '==', '!=']
+OPERATOR_LIST = ['+', '++', '-', '--', '*', '/', '>', '<', '>=', '<=', '=', '==', '!=', '!']
 
 current_pos = -1
 current_line = 0
@@ -49,8 +49,12 @@ def read_file(file):
     input_str = f.readlines();
     f.close()
     
-def lexical_error(info):
-    print(str(current_line+1) + ':' + str(current_pos+1) + ' Lexical error: ' + info)
+def lexical_error(info, line=None, row=None):
+    if line is None:
+        line = current_line + 1
+    if row is None:
+        row = current_pos + 1
+    print(str(line) + ':' + str(row) + ' Lexical error: ' + info)
 
 def scanner():
     current_char = getchar()
@@ -94,12 +98,35 @@ def scanner():
             current_char = getchar()
             if current_char == 'SCANEOF':
                 lexical_error('missing terminating \"')
-                return None
+                return 'SCANEOF'
         return('STRING', str_literal)
-                
+    
+    if current_char == '/':
+        next_char = getchar()
+        line = int(current_line) + 1;
+        row = int(current_pos) + 1;
+        if next_char == '*':
+            comment = ''
+            next_char = getchar()
+            while True:
+                if next_char == 'SCANEOF':
+                    lexical_error('Untemintaed /* comment', line, row)
+                    return 'SCANEOF'
+                if next_char == '*':
+                    end_char = getchar()
+                    if end_char == '/':
+                        return ('COMMENT', comment)
+                    if end_char == 'SCANEOF':
+                        lexical_error('Untemintaed /* comment', line, row)
+                        return 'SCANEOF'
+                comment += next_char
+                next_char = getchar()
+        else:
+            ungetc()
+            return None            
     if is_separator(current_char):
         return ('SEP', current_char)
-        
+    
     if is_operator(current_char):
         op = ''
         while is_operator(current_char):
