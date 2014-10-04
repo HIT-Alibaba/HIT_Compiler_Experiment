@@ -5,13 +5,12 @@ double _my_double1 = 16.78;
 for(int i=0;i<10;i++) {
     i += 10;
 }
-char *a = "Hello";
+char *a = "Hello;
 int c = 10;
 while(c--) {
     a += (b - c) / 2;
 }
 
-/**/ 
 if (a != b) {
    c = a + b
 }
