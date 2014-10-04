@@ -92,13 +92,20 @@ def scanner():
             
     if current_char == '\"':
         str_literal = ''
+        start_line = current_line
+        start_pos = current_pos
+        
         current_char = getchar()
         while current_char != '\"':
             str_literal += current_char
             current_char = getchar()
             if current_char == 'SCANEOF':
                 lexical_error('missing terminating \"')
-                return 'SCANEOF'
+                global current_line
+                global current_pos
+                current_line = start_line
+                current_pos = start_pos
+                return None
         return('STRING', str_literal)
     
     if current_char == '/':
