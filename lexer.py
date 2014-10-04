@@ -130,6 +130,7 @@ def scanner():
                 comment += next_char
                 next_char = getchar()
         else:
+            return ('OP', current_char)
             ungetc()
             return None            
     if is_separator(current_char):
