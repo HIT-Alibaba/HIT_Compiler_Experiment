@@ -68,18 +68,16 @@ def scanner():
             ungetc()
             return ('INT', int_value)
         
-        float_value = int_value
-        d = 10.0
+        float_value = str(int_value) + '.'
         current_char = getchar()
         while current_char.isdigit():
-            float_value = float_value + int(current_char) / d
-            d = d * 10
+            float_value += current_char
             current_char = getchar()
         ungetc()
         return ('FLOAT', float_value)
-    if current_char.isalpha():
+    if current_char.isalpha() or current_char == '_':
         string = ''
-        while current_char.isalpha():
+        while current_char.isalpha() or current_char.isdigit() or current_char == '_':
             string += current_char
             current_char = getchar()
         ungetc()
@@ -87,8 +85,21 @@ def scanner():
             return ('KEYWORD', string)
         else:
             return ('ID', string)
+            
+    if current_char == '\"':
+        str_literal = ''
+        current_char = getchar()
+        while current_char != '\"':
+            str_literal += current_char
+            current_char = getchar()
+            if current_char == 'SCANEOF':
+                lexical_error('missing terminating \"')
+                return None
+        return('STRING', str_literal)
+                
     if is_separator(current_char):
         return ('SEP', current_char)
+        
     if is_operator(current_char):
         op = ''
         while is_operator(current_char):
@@ -97,6 +108,7 @@ def scanner():
         ungetc()
         return ('OP', op)
     else:
+        print(current_char)
         lexical_error('unknown character')
             
 def main():
