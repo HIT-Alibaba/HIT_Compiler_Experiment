@@ -92,6 +92,8 @@ def scanner():
             
     if current_char == '\"':
         str_literal = ''
+        global current_line
+        global current_pos
         start_line = current_line
         start_pos = current_pos
         
@@ -101,8 +103,7 @@ def scanner():
             current_char = getchar()
             if current_char == 'SCANEOF':
                 lexical_error('missing terminating \"')
-                global current_line
-                global current_pos
+
                 current_line = start_line
                 current_pos = start_pos
                 return None
