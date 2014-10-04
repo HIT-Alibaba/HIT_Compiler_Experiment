@@ -8,7 +8,7 @@ for(int i=0;i<10;i++) {
 char *a = "Hello";
 int c = 10;
 while(c--) {
-    a += (b - c) / 2;
+    a /= (b - c) * 2;
 }
 
 if (a != b) {

@@ -7,7 +7,7 @@ KEYWORD_LIST = ['if', 'else', 'while', 'break', 'continue', 'for', 'double', 'in
         
 SEPARATOR_LIST = ['{', '}', '[', ']', '(', ')', '~', ',', ';', '.', '#', '?', ':']
 
-OPERATOR_LIST = ['+', '++', '-', '--', '*', '/', '>', '<', '>=', '<=', '=', '==', '!=', '!']
+OPERATOR_LIST = ['+', '++', '-', '--', '+=', '-=', '*', '*=', '/', '/=', '>', '<', '>=', '<=', '=', '==', '!=', '!']
 
 current_pos = -1
 current_line = 0
@@ -130,9 +130,14 @@ def scanner():
                 comment += next_char
                 next_char = getchar()
         else:
-            return ('OP', current_char)
             ungetc()
-            return None            
+            op = ''
+            while is_operator(current_char):
+                op += current_char
+                current_char = getchar()
+            ungetc()
+            return ('OP', op)
+            
     if is_separator(current_char):
         return ('SEP', current_char)
     
