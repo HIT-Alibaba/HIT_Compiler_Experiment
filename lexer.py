@@ -94,18 +94,18 @@ def scanner():
         str_literal = ''
         global current_line
         global current_pos
-        start_line = current_line
-        start_pos = current_pos
+        line = current_line + 1
+        row = current_pos + 1
         
         current_char = getchar()
         while current_char != '\"':
             str_literal += current_char
             current_char = getchar()
             if current_char == 'SCANEOF':
-                lexical_error('missing terminating \"')
+                lexical_error('missing terminating \"', line, row)
 
-                current_line = start_line
-                current_pos = start_pos
+                current_line = line
+                current_pos = row
                 return None
         return('STRING', str_literal)
     
