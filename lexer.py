@@ -106,7 +106,7 @@ def scanner():
 
                 current_line = line
                 current_pos = row
-                return None
+                return 'SCANEOF'
         return('STRING', str_literal)
     
     if current_char == '/':
