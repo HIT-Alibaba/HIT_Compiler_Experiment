@@ -3,13 +3,76 @@
 import sys
 
 KEYWORD_LIST = ['if', 'else', 'while', 'break', 'continue', 'for', 'double', 'int', 'float', 'long', 'short',
-                'switch', 'case', 'return']
+                'switch', 'case', 'return', 'void']
 
 SEPARATOR_LIST = [
     '{', '}', '[', ']', '(', ')', '~', ',', ';', '.', '#', '?', ':']
 
-OPERATOR_LIST = ['+', '++', '-', '--', '+=', '-=', '*', '*=',
+OPERATOR_LIST = ['+', '++', '-', '--', '+=', '-=', '*', '*=', '%', '%=',
                  '/', '/=', '>', '<', '>=', '<=', '=', '==', '!=', '!']
+
+CATEGORY_DICT = {
+    "double": 265,
+    "int": 266,
+    "break": 268,
+    "else": 269,
+    "switch": 271,
+    "case": 272,
+    "char": 276,
+    "return": 278,
+    "float":  281,
+    "continue": 284,
+    "for": 285,
+    "void": 287,
+    "do": 292,
+    "if": 293,
+    "while": 294,
+    "static": 295,
+    "{": 299,
+    "}": 300,
+    "[": 301,
+    "]": 302,
+    "(": 303,
+    ")": 304,
+    "~": 305,
+    ",": 306,
+    ";": 307,
+    "?": 310,
+    ":": 311,
+    "<": 314,
+    "<=": 315,
+    ">": 316,
+    ">=": 317,
+    "=": 318,
+    "==": 319,
+    "|": 320,
+    "||": 321,
+    "|=": 322,
+    "^": 323,
+    "^=": 324,
+    "&": 325,
+    "&&": 326,
+    "&=": 327,
+    "%": 328,
+    "%=": 329,
+    "+": 330,
+    "++": 331,
+    "+=": 332,
+    "-": 333,
+    "--": 334,
+    "-=": 335,
+    "->": 336,
+    "/": 337,
+    "/=": 338,
+    "*": 339,
+    "*=": 340,
+    "!": 341,
+    "!=": 342,
+    "ID":256,
+    'INT10':346,
+    'FLOAT':347,
+    'STRING':351,
+}
 
 current_row = -1
 current_line = 0
@@ -27,7 +90,9 @@ def is_separator(s):
 def is_operator(s):
     return s in OPERATOR_LIST
 
-
+def get_cate_id(s):
+    return CATEGORY_DICT[s]
+    
 def getchar():
     global current_row
     global current_line
@@ -82,7 +147,7 @@ def scanner():
 
         if current_char != '.':
             ungetc()
-            return ('INT', int_value)
+            return ('INT', int_value, get_cate_id('INT10'))
 
         float_value = str(int_value) + '.'
         current_char = getchar()
@@ -90,7 +155,7 @@ def scanner():
             float_value += current_char
             current_char = getchar()
         ungetc()
-        return ('FLOAT', float_value)
+        return ('FLOAT', float_value, get_cate_id('FLOAT'))
     if current_char.isalpha() or current_char == '_':
         string = ''
         while current_char.isalpha() or current_char.isdigit() or current_char == '_':
@@ -101,9 +166,9 @@ def scanner():
                 
         ungetc()
         if is_keyword(string):
-            return ('KEYWORD', string)
+            return ('KEYWORD', string, get_cate_id(string))
         else:
-            return ('ID', string)
+            return ('ID', string, get_cate_id('ID'))
 
     if current_char == '\"':
         str_literal = ''
@@ -122,7 +187,7 @@ def scanner():
                 current_line = line
                 current_row = row
                 return 'SCANEOF'
-        return('STRING', str_literal)
+        return('STRING', str_literal, get_cate_id('STRING'))
 
     if current_char == '/':
         next_char = getchar()
@@ -152,10 +217,10 @@ def scanner():
                 op += current_char
             else:
                 ungetc()
-            return ('OP', op)
+            return ('OP', op, get_cate_id(op))
 
     if is_separator(current_char):
-        return ('SEP', current_char)
+        return ('SEP', current_char, get_cate_id(current_char))
 
     if is_operator(current_char):
         op = current_char
@@ -164,7 +229,7 @@ def scanner():
             op += current_char
         else:
             ungetc()
-        return ('OP', op)
+        return ('OP', op, get_cate_id(op))
     else:
         print(current_char)
         lexical_error('unknown character')
