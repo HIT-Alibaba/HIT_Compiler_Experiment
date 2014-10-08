@@ -5,7 +5,6 @@ double _my_double1 = 16.78;
 for(int i=0;i<10;i++) {
     i += 10;
 }
-a = +======b;
 char *a = "Hello;
 int c = 10;
 while(c--) {

@@ -141,11 +141,12 @@ def scanner():
                 next_char = getchar()
         else:
             ungetc()
-            op = ''
-            while is_operator(current_char):
+            op = current_char
+            current_char = getchar()
+            if is_operator(current_char):
                 op += current_char
-                current_char = getchar()
-            ungetc()
+            else:
+                ungetc()
             return ('OP', op)
 
     if is_separator(current_char):
