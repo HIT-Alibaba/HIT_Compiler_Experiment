@@ -5,10 +5,9 @@ import sys
 KEYWORD_LIST = ['if', 'else', 'while', 'break', 'continue', 'for', 'double', 'int', 'float', 'long', 'short',
                 'switch', 'case', 'return', 'void']
 
-SEPARATOR_LIST = [
-    '{', '}', '[', ']', '(', ')', '~', ',', ';', '.', '#', '?', ':']
+SEPARATOR_LIST = ['{', '}', '[', ']', '(', ')', '~', ',', ';', '.', '?', ':']
 
-OPERATOR_LIST = ['+', '++', '-', '--', '+=', '-=', '*', '*=', '%', '%=',
+OPERATOR_LIST = ['+', '++', '-', '--', '+=', '-=', '*', '*=', '%', '%=', '->', '|', '||', '|=',
                  '/', '/=', '>', '<', '>=', '<=', '=', '==', '!=', '!']
 
 CATEGORY_DICT = {
@@ -68,10 +67,10 @@ CATEGORY_DICT = {
     "*=": 340,
     "!": 341,
     "!=": 342,
-    "ID":256,
-    'INT10':346,
-    'FLOAT':347,
-    'STRING':351,
+    "ID": 256,
+    'INT10': 346,
+    'FLOAT': 347,
+    'STRING': 351,
 }
 
 current_row = -1
@@ -90,21 +89,23 @@ def is_separator(s):
 def is_operator(s):
     return s in OPERATOR_LIST
 
+
 def get_cate_id(s):
     return CATEGORY_DICT[s]
-    
+
+
 def getchar():
     global current_row
     global current_line
     current_row = current_row + 1
-    
+
     if current_row == len(input_str[current_line]):
         current_line = current_line + 1
         current_row = 0
-        
-    if current_line  == len(input_str):
+
+    if current_line == len(input_str):
         return 'SCANEOF'
-    
+
     return input_str[current_line][current_row]
 
 
@@ -163,7 +164,7 @@ def scanner():
             current_char = getchar()
             if current_char == 'SCANEOF':
                 break
-                
+
         ungetc()
         if is_keyword(string):
             return ('KEYWORD', string, get_cate_id(string))
@@ -198,14 +199,14 @@ def scanner():
             next_char = getchar()
             while True:
                 if next_char == 'SCANEOF':
-                    lexical_error('Untemintaed /* comment', line, row)
+                    lexical_error('unteminated /* comment', line, row)
                     return 'SCANEOF'
                 if next_char == '*':
                     end_char = getchar()
                     if end_char == '/':
                         return ('COMMENT', comment)
                     if end_char == 'SCANEOF':
-                        lexical_error('Untemintaed /* comment', line, row)
+                        lexical_error('unteminated /* comment', line, row)
                         return 'SCANEOF'
                 comment += next_char
                 next_char = getchar()
@@ -231,14 +232,10 @@ def scanner():
             ungetc()
         return ('OP', op, get_cate_id(op))
     else:
-        print(current_char)
-        lexical_error('unknown character')
+        lexical_error('unknown character: ' + current_char)
 
 
 def main():
-    global input_str
-    global current_row
-    global current_line
     file_name = sys.argv[1]
     read_file(file_name)
     while True:
