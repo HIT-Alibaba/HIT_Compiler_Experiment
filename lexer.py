@@ -152,11 +152,12 @@ def scanner():
         return ('SEP', current_char)
 
     if is_operator(current_char):
-        op = ''
-        while is_operator(current_char):
+        op = current_char
+        current_char = getchar()
+        if is_operator(current_char):
             op += current_char
-            current_char = getchar()
-        ungetc()
+        else:
+            ungetc()
         return ('OP', op)
     else:
         print(current_char)
