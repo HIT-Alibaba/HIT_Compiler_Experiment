@@ -32,12 +32,14 @@ def getchar():
     global current_pos
     global current_line
     current_pos = current_pos + 1
+    
     if current_pos == len(input_str[current_line]):
         current_line = current_line + 1
         current_pos = 0
-
-    if current_line == len(input_str):
+        
+    if current_line  == len(input_str):
         return 'SCANEOF'
+    
     return input_str[current_line][current_pos]
 
 
@@ -47,7 +49,7 @@ def ungetc():
     current_pos = current_pos - 1
     if current_pos < 0:
         current_line = current_line - 1
-        current_pos = 0
+        current_pos = len(input_str[current_pos]) - 1
     return input_str[current_line][current_pos]
 
 
@@ -94,6 +96,9 @@ def scanner():
         while current_char.isalpha() or current_char.isdigit() or current_char == '_':
             string += current_char
             current_char = getchar()
+            if current_char == 'SCANEOF':
+                break
+                
         ungetc()
         if is_keyword(string):
             return ('KEYWORD', string)
