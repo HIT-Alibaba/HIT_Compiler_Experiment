@@ -11,7 +11,7 @@ SEPARATOR_LIST = [
 OPERATOR_LIST = ['+', '++', '-', '--', '+=', '-=', '*', '*=',
                  '/', '/=', '>', '<', '>=', '<=', '=', '==', '!=', '!']
 
-current_pos = -1
+current_row = -1
 current_line = 0
 input_str = []
 
@@ -29,28 +29,28 @@ def is_operator(s):
 
 
 def getchar():
-    global current_pos
+    global current_row
     global current_line
-    current_pos = current_pos + 1
+    current_row = current_row + 1
     
-    if current_pos == len(input_str[current_line]):
+    if current_row == len(input_str[current_line]):
         current_line = current_line + 1
-        current_pos = 0
+        current_row = 0
         
     if current_line  == len(input_str):
         return 'SCANEOF'
     
-    return input_str[current_line][current_pos]
+    return input_str[current_line][current_row]
 
 
 def ungetc():
-    global current_pos
+    global current_row
     global current_line
-    current_pos = current_pos - 1
-    if current_pos < 0:
+    current_row = current_row - 1
+    if current_row < 0:
         current_line = current_line - 1
-        current_pos = len(input_str[current_pos]) - 1
-    return input_str[current_line][current_pos]
+        current_row = len(input_str[current_row]) - 1
+    return input_str[current_line][current_row]
 
 
 def read_file(file):
@@ -64,7 +64,7 @@ def lexical_error(info, line=None, row=None):
     if line is None:
         line = current_line + 1
     if row is None:
-        row = current_pos + 1
+        row = current_row + 1
     print(str(line) + ':' + str(row) + ' Lexical error: ' + info)
 
 
@@ -108,9 +108,9 @@ def scanner():
     if current_char == '\"':
         str_literal = ''
         global current_line
-        global current_pos
+        global current_row
         line = current_line + 1
-        row = current_pos + 1
+        row = current_row + 1
 
         current_char = getchar()
         while current_char != '\"':
@@ -120,14 +120,14 @@ def scanner():
                 lexical_error('missing terminating \"', line, row)
 
                 current_line = line
-                current_pos = row
+                current_row = row
                 return 'SCANEOF'
         return('STRING', str_literal)
 
     if current_char == '/':
         next_char = getchar()
         line = int(current_line) + 1
-        row = int(current_pos) + 1
+        row = int(current_row) + 1
         if next_char == '*':
             comment = ''
             next_char = getchar()
@@ -172,7 +172,7 @@ def scanner():
 
 def main():
     global input_str
-    global current_pos
+    global current_row
     global current_line
     file_name = sys.argv[1]
     read_file(file_name)
