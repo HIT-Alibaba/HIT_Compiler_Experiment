@@ -204,7 +204,8 @@ def scanner():
                 if next_char == '*':
                     end_char = getchar()
                     if end_char == '/':
-                        return ('COMMENT', comment)
+                        # Comment, return None to ignore it.
+                        return None
                     if end_char == 'SCANEOF':
                         lexical_error('unteminated /* comment', line, row)
                         return 'SCANEOF'
@@ -235,6 +236,17 @@ def scanner():
         lexical_error('unknown character: ' + current_char)
 
 
+def get_tokens(file_name):
+    token_list = []
+    read_file(file_name)
+    while True:
+        r = scanner()
+        if r == 'SCANEOF':
+            break
+        if r is not None:
+            token_list.append(r)
+    return token_list
+            
 def main():
     file_name = sys.argv[1]
     read_file(file_name)
