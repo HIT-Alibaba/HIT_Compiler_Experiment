@@ -167,7 +167,7 @@ def scanner():
 
         ungetc()
         if is_keyword(string):
-            return ('KEYWORD', string, get_cate_id(string))
+            return (string, '', get_cate_id(string))
         else:
             return ('ID', string, get_cate_id('ID'))
 
