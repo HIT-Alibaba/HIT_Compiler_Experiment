@@ -245,6 +245,7 @@ def get_tokens(file_name):
             break
         if r is not None:
             token_list.append(r)
+    token_list.append(('$','',''))
     return token_list
             
 def main():
