@@ -234,19 +234,6 @@ def scanner():
         return ('OP', op, get_cate_id(op))
     else:
         lexical_error('unknown character: ' + current_char)
-
-
-def get_tokens(file_name):
-    token_list = []
-    read_file(file_name)
-    while True:
-        r = scanner()
-        if r == 'SCANEOF':
-            break
-        if r is not None:
-            token_list.append(r)
-    token_list.append(('$','',''))
-    return token_list
             
 def main():
     file_name = sys.argv[1]
