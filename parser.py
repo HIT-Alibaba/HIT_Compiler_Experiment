@@ -252,7 +252,7 @@ def get_follow():
                 current_symbol = symbol_for_str(s)
                 previous_follow_set = current_symbol.follow_set
                 next_is_nullable = True
-                for s2 in p.right[p.right.index(s):]:
+                for s2 in p.right[p.right.index(s)+1:]:
                     next_symbol = symbol_for_str(s2)
                     current_symbol.follow_set.update(next_symbol.first_set)
                     if next_symbol.is_nullable:
