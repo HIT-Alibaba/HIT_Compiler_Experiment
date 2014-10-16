@@ -1,0 +1,90 @@
+*terminals
+ID
+VOID
+INT
+CHAR
+FLOAT
+LONG
+DOUBLE
+SHORT
+WHILE
+IF
+ELSE
+( 
+)
+,
+;
+{
+}
+=
+:
+>
+<
+>=
+<=
+!=
+==
+=
++=
+-=
+*=
+/=
+%=
++
+-
+*
+/
+%
+++
+--
+!
+int
+float
+short
+long
+string
+*productions
+<s>             ::= <program>
+<program>       ::= <declarations>
+<declarations>  ::= <func_declaration> <declarations>
+<declarations>  ::=
+<func_declaration>::= <type> ID ( ) <compound_stmt>
+<stmt>          ::= <compound_stmt>
+<stmt>          ::= <iter_stmt>
+<stmt>          ::= <selection_stmt>
+<stmt>          ::= <expression> ;
+<stmts>         ::= <stmt> <stmts>
+<stmts>         ::= 
+<compound_stmt> ::= { <define_stmts> <stmts> }
+<define_stmt>   ::= { <define_stmts> <stmts> }
+<define_stmts>  ::= <define_stmt> <define_stmts>
+<define_stmts>  ::=
+<iter_stmt>     ::= WHILE ( <expression> ) <stmt>
+<selection_stmt>::= IF ( <expression> ) <stmt> <else_stmt>
+<else_stmt>     ::= ELSE <stmt> <else_stmt>
+<else_stmt>     ::=
+<type>          ::= INT
+<type>          ::= FLOAT
+<type>          ::= DOUBLE
+<type>          ::= SHORT
+<type>          ::= LONG
+<const>         ::= int
+<const>         ::= float
+<const>         ::= short
+<const>         ::= long
+<const>         ::= string
+<compare_op>    ::= >
+<compare_op>    ::= <
+<compare_op>    ::= =
+<compare_op>    ::= >=
+<compare_op>    ::= <=
+<compare_op>    ::= ==
+<compare_op>    ::= !=
+<arith_op>      ::= +
+<arith_op>      ::= -
+<arith_op>      ::= *
+<arith_op>      ::= /
+<arith_op>      ::= %
+<expression>    ::= ID <arith_op> ID
+*end 
+
