@@ -1,39 +1,45 @@
-import sys
-from lexer import current_row, current_line
 from util import Production, Symbol
 
-TERMINAL_LIST = ["<ID>","<(>","<)>","<VOID>","<INT>","<CHAR>","<FLOAT>","<LONG>","<DOUBLE>","<SHORT>","<,>",
-				 "<;>","<{>","<}>","<=>","<CONTINUE>","<BREAK>","<RETURN>","<WHILE>","<IF>","<ELSE>",
-				 "<:>","<>>","<<>","<>=>","<<=>","<!=>","<==>","<=>","<+=>","<-=>","<*=>","</=>","<%=>",
-                 "<+>","<->","<*>","</>","<%>","<++>","<-->","<int>","<float>", "<short>" ,"<long>", "<string>","<!>","#"]
-                 
-NON_TERMINAL_LIST = ['<s>','<type>', '<func_declaration>','<compound_stmt>','<define_stmt>','<define_stmts>', '<stmts>', '<stmt>', '<iter_stmt>', '<else_stmt>',
-                    '<selection_stmt>', '<expression>', '<assignment>', '<compare_op>', '<arith_op>', '<operation>','<term>', '<terms>', '<value>',
-                    '<factor>','<factors>', '<const>', '<declarations>', '<declaration>']
+
+TERMINAL_LIST = ["<ID>", "<(>", "<)>", "<VOID>", "<INT>", "<CHAR>", "<FLOAT>", "<LONG>", "<DOUBLE>", "<SHORT>", "<,>",
+                 "<;>", "<{>", "<}>", "<=>", "<CONTINUE>", "<BREAK>", "<RETURN>", "<WHILE>", "<IF>", "<ELSE>",
+                 "<:>", "<>>", "<<>", "<>=>", "<<=>", "<!=>", "<==>", "<=>", "<+=>", "<-=>", "<*=>", "</=>", "<%=>",
+                 "<+>", "<->", "<*>", "</>", "<%>", "<++>", "<-->", "<int>", "<float>", "<short>", "<long>", "<string>",
+                 "<!>", "#"]
+
+NON_TERMINAL_LIST = ['<s>', '<type>', '<func_declaration>', '<compound_stmt>', '<define_stmt>', '<define_stmts>',
+                     '<stmts>', '<stmt>', '<iter_stmt>', '<else_stmt>',
+                     '<selection_stmt>', '<expression>', '<assignment>', '<compare_op>', '<arith_op>', '<operation>',
+                     '<term>', '<terms>', '<value>',
+                     '<factor>', '<factors>', '<const>', '<declarations>']
 
 SYMBOL_DICT = {}
 
 PRODUCTION_LIST = []
 
+
 def symbol_for_str(str):
     return SYMBOL_DICT[str]
 
+
 def is_terminal(str):
     return str in TERMINAL_LIST
+
 
 def prepare_symbols():
     for s in TERMINAL_LIST:
         sym = Symbol(s, sym_type='T')
         SYMBOL_DICT[s] = sym
-         
+
     for s in NON_TERMINAL_LIST:
         sym = Symbol(s, sym_type='N')
         SYMBOL_DICT[s] = sym
-        
+
+
 def prepare_productions():
     p1 = Production('<type>', ['<INT>'])
-    p2 = Production('<type>', ['<FLOAT>']) 
-    p3 = Production('<type>', ['<DOUBLE>'])  
+    p2 = Production('<type>', ['<FLOAT>'])
+    p3 = Production('<type>', ['<DOUBLE>'])
     p4 = Production('<type>', ['<SHORT>'])
     p5 = Production('<type>', ['<LONG>'])
     p6 = Production('<const>', ['<int>'])
@@ -52,46 +58,54 @@ def prepare_productions():
     p19 = Production('<arith_op>', ['<*>'])
     p20 = Production('<arith_op>', ['</>'])
     p21 = Production('<arith_op>', ['<%>'])
-    p22 = Production('<arith_op>', ['<+=>'])
-    p23 = Production('<arith_op>', ['<-=>'])
-    p24 = Production('<arith_op>', ['<*=>'])
-    p25 = Production('<arith_op>', ['</=>'])
-    p26 = Production('<arith_op>', ['<%=>'])
-    p27 = Production('<factor>', ['<arith_op>', '<factor>'])
+
+    p27 = Production('<factor>', ['<+>', '<factor>'])
+    p62 = Production('<factor>', ['<->', '<factor>'])
+    p63 = Production('<factor>', ['<*>', '<factor>'])
+    p64 = Production('<factor>', ['</>', '<factor>'])
+
     p28 = Production('<factor>', ['<const>'])
-    p29 = Production('<factor>', [])
     p30 = Production('<factor>', ['<(>', '<expression>', '<)>'])
-    p31 = Production('<factors>', ['<arith_op>', '<factor>', '<factors>'])
-    p32 = Production('<factors>', [])
+    p31 = Production('<factors>', ['<+>', '<factor>', '<factors>'])
+    p65 = Production('<factors>', ['<->', '<factor>', '<factors>'])
+    p66 = Production('<factors>', ['<*>', '<factor>', '<factors>'])
+    p67 = Production('<factors>', ['</>', '<factor>', '<factors>'])
+
+    p32 = Production('<factors>', ['null'])
     p33 = Production('<term>', ['<factor>', '<factors>'])
-    p34 = Production('<terms>', ['<arith_op>', '<term>', '<terms>'])
-    p35 = Production('<terms>', [])
+    p34 = Production('<terms>', ['<+>', '<term>', '<terms>'])
+    p68 = Production('<terms>', ['<->', '<term>', '<terms>'])
+    p69 = Production('<terms>', ['<*>', '<term>', '<terms>'])
+    p70 = Production('<terms>', ['</>', '<term>', '<terms>'])
+
+    p35 = Production('<terms>', ['null'])
     p36 = Production('<value>', ['<term>', '<terms>'])
     p37 = Production('<operation>', ['<arith_op>', '<value>'])
     p38 = Production('<operation>', ['<compare_op>', '<value>'])
-    p39 = Production('<operation>', [])
+    p39 = Production('<operation>', ['null'])
     p40 = Production('<expression>', ['<value>', '<operation>'])
 
-    p41 = Production('<assignment>', ['<=>', '<expression>'])
-    p42 = Production('<assignment>', [])
+    p41 = Production('<assignment>', ['<=>', '<expression>', '<;>'])
+    p42 = Production('<assignment>', ['null'])
     p43 = Production('<define_stmt>', ['<type>', '<ID>', '<assignment>'])
     p44 = Production('<define_stmts>', ['<define_stmt>', '<define_stmts>'])
-    p45 = Production('<define_stmts>', [])
-    p46 = Production('<compound_stmt>', ['<define_stmts>', '<stmts>'])
-    p47 = Production('<iter_stmt>', ['<WHILE>', '<(>', '<expression>', '<stmt>'])
-    p48 = Production('<selection_stmt>', ['<IF>', '<(>', '<expression>', '<(>', '<stmt>', '<else_stmt>'])
+    p45 = Production('<define_stmts>', ['null'])
+    p46 = Production('<compound_stmt>', ['<{>', '<define_stmts>', '<stmts>', '<}>'])
+    p47 = Production('<iter_stmt>', ['<WHILE>', '<(>', '<expression>', '<)>', '<stmt>'])
+    p48 = Production('<selection_stmt>', ['<IF>', '<(>', '<expression>', '<)>', '<stmt>', '<else_stmt>'])
     p49 = Production('<else_stmt>', ['<ELSE>', '<stmt>', '<else_stmt>'])
-    p50 = Production('<else_stmt>', [])
+    p50 = Production('<else_stmt>', ["null"])
     p51 = Production('<stmt>', ['<compound_stmt>'])
     p52 = Production('<stmt>', ['<iter_stmt>'])
     p53 = Production('<stmt>', ['<selection_stmt>'])
     p54 = Production('<stmt>', ['<expression>', '<,>'])
     p55 = Production('<stmts>', ['<stmt>', '<stmts>'])
-    p56 = Production('<stmts>', [])
+    p56 = Production('<stmts>', ['null'])
     p57 = Production('<func_declaration>', ['<type>', '<ID>', '<(>', '<)>', '<compound_stmt>'])
-    p56 = Production('<s>', ['<declarations'])
-    p56 = Production('<declarations>', ['<func_declaration>', '<declarations'])
-    p56 = Production('<declarations>', [])
+    p58 = Production('<s>', ['<declarations>'])
+    p59 = Production('<declarations>', ['<func_declaration>', '<declarations>'])
+    p60 = Production('<declarations>', ['null'])
+    p61 = Production('<define_stmt>', ['null'])
 
     PRODUCTION_LIST.append(p1)
     PRODUCTION_LIST.append(p2)
@@ -114,14 +128,9 @@ def prepare_productions():
     PRODUCTION_LIST.append(p19)
     PRODUCTION_LIST.append(p20)
     PRODUCTION_LIST.append(p21)
-    PRODUCTION_LIST.append(p22)
-    PRODUCTION_LIST.append(p23)
-    PRODUCTION_LIST.append(p24)
-    PRODUCTION_LIST.append(p25)
-    PRODUCTION_LIST.append(p26)
+
     PRODUCTION_LIST.append(p27)
     PRODUCTION_LIST.append(p28)
-    PRODUCTION_LIST.append(p29)
     PRODUCTION_LIST.append(p30)
     PRODUCTION_LIST.append(p31)
     PRODUCTION_LIST.append(p32)
@@ -150,63 +159,85 @@ def prepare_productions():
     PRODUCTION_LIST.append(p55)
     PRODUCTION_LIST.append(p56)
     PRODUCTION_LIST.append(p57)
+    PRODUCTION_LIST.append(p58)
+    PRODUCTION_LIST.append(p59)
+    PRODUCTION_LIST.append(p60)
+    PRODUCTION_LIST.append(p61)
+    PRODUCTION_LIST.append(p62)
+    PRODUCTION_LIST.append(p63)
+    PRODUCTION_LIST.append(p64)
+    PRODUCTION_LIST.append(p65)
+    PRODUCTION_LIST.append(p66)
+    PRODUCTION_LIST.append(p67)
+    PRODUCTION_LIST.append(p68)
+    PRODUCTION_LIST.append(p69)
+    PRODUCTION_LIST.append(p70)
 
-    
-def get_derived_empty():
-    # init derived_empty
+
+def get_nullable():
+    # init is_nullable
     changes = True
     while changes:
         changes = False
         for p in PRODUCTION_LIST:
-            if not symbol_for_str(p.left).derived_empty:
-                if len(p.right) == 0:
-                    symbol_for_str(p.left).derived_empty = True
+            if not symbol_for_str(p.left).is_nullable:
+                if p.right[0] == 'null':
+                    symbol_for_str(p.left).is_nullable = True
                     changes = True
                     continue
                 else:
-                    right_derived_empty = symbol_for_str(p.right[0]).derived_empty
+                    right_is_nullable = symbol_for_str(p.right[0]).is_nullable
                     for r in p.right[1:]:
-                        right_derived_empty = right_derived_empty & symbol_for_str(r).derived_empty
-                        
-                    if right_derived_empty:
+                        right_is_nullable = right_is_nullable & symbol_for_str(r).is_nullable
+
+                    if right_is_nullable:
                         changes = True
-                        symbol_for_str(p.left).derived_empty = True
-                
-        
+                        symbol_for_str(p.left).is_nullable = True
+
+
 def get_first():
     for s in TERMINAL_LIST:
         sym = SYMBOL_DICT[s]
         sym.first_set = set([s])
-        
+
     for s in NON_TERMINAL_LIST:
         sym = SYMBOL_DICT[s]
-        if sym.derived_empty:
-            sym.first_set=set(['null'])
+        if sym.is_nullable:
+            sym.first_set = set(['null'])
         else:
             sym.first_set = set()
-        
-    first_set_is_stable = True
+
     while True:
         first_set_is_stable = True
         for p in PRODUCTION_LIST:
             sym_left = symbol_for_str(p.left)
+            if p.right[0] == 'null':
+                sym_left.first_set.update(set(['null']))
+                continue
+            previous_first_set = sym_left.first_set
+
             for s in p.right:
                 sym_right = symbol_for_str(s)
-                temp_set = sym_left.first_set.union(sym_right.first_set)
-                if temp_set != sym_left.first_set:
-                    sym_left.first_set = temp_set
-                    first_set_is_stable = False
-                if sym_right.derived_empty:
+                sym_left.first_set.update(sym_right.first_set)
+                if sym_right.is_nullable:
                     continue
+                else:
+                    break
+
+            if previous_first_set != sym_left.first_set:
+                first_set_is_stable = False
+
         if first_set_is_stable:
-            break;
+            break
+
 
 def get_follow():
     for s in NON_TERMINAL_LIST:
         sym = symbol_for_str(s)
         sym.follow_set = set()
 
-    follow_set_is_stable = True
+    symbol_for_str('<s>').follow_set.update(set(['#']))
+
     while True:
         follow_set_is_stable = True
         for p in PRODUCTION_LIST:
@@ -214,41 +245,69 @@ def get_follow():
             if sym_left.is_terminal():
                 continue
             for s in p.right:
+                if s == 'null':
+                    continue
                 if symbol_for_str(s).is_terminal():
                     continue
-                previous_follow_set = symbol_for_str(s).follow_set
-                next_r = None
-                try:
-                    next_r = p.right[p.right.index(s) + 1]
-                except IndexError:
-                    break
-                symbol_for_str(next_r).first_set.difference_update(set(['null']))
-                r = symbol_for_str(next_r).first_set
-                symbol_for_str(s).follow_set.update(r)
+                current_symbol = symbol_for_str(s)
+                previous_follow_set = current_symbol.follow_set
+                next_is_nullable = True
+                for s2 in p.right[p.right.index(s):]:
+                    next_symbol = symbol_for_str(s2)
+                    current_symbol.follow_set.update(next_symbol.first_set)
+                    if next_symbol.is_nullable:
+                        continue
+                    else:
+                        next_is_nullable = False
+                        break
+                if next_is_nullable:
+                    current_symbol.follow_set.update(sym_left.follow_set)
 
-                if 'null' in symbol_for_str(next_r).first_set:
-                    symbol_for_str(s).follow_set = symbol_for_str(s).follow_set.union(symbol_for_str(sym_left).follow_set)
-
-                if previous_follow_set != symbol_for_str(s).follow_set:
+                if current_symbol.follow_set != previous_follow_set:
                     follow_set_is_stable = False
 
         if follow_set_is_stable:
-            break;
+            break
+
+
+def get_select():
+    while True:
+        select_set_is_stable = True
+        for p in PRODUCTION_LIST:
+            sym_left = symbol_for_str(p.left)
+            previous_select = p.select
+            if p.right[0] == 'null':
+                p.select.update(sym_left.follow_set)
+                continue
+            sym_right = symbol_for_str(p.right[0])
+            p.select.update(sym_right.first_set)
+            if sym_right.is_nullable:
+                p.select.update(sym_right.first_set.union(sym_left.follow_set))
+            if previous_select != p.select:
+                select_set_is_stable = False
+        if select_set_is_stable:
+            break
+
 
 def syntax_error(msg):
     print(msg)
-    
+
+
 def main():
-    #file_name = sys.argv[1]
+    # file_name = sys.argv[1]
     prepare_symbols()
     prepare_productions()
-    get_derived_empty()
+    get_nullable()
     get_first()
     get_follow()
     for s in NON_TERMINAL_LIST:
         sym = SYMBOL_DICT[s]
         print sym
-       
+
+    get_select()
+    for p in PRODUCTION_LIST:
+        print p
+
 
 if __name__ == '__main__':
     main()
