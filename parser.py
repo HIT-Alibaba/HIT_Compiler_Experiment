@@ -9,6 +9,8 @@ SYMBOL_DICT = {}
 
 PRODUCTION_LIST = []
 
+ANALYSIS_TABLE = {}
+
 
 def symbol_for_str(str):
     return SYMBOL_DICT[str]
@@ -48,7 +50,6 @@ def prepare_symbols_and_productions():
             except IndexError:
                 p = Production(left, ['null'])
 
-            print(p)
             PRODUCTION_LIST.append(p)
 
     for s in TERMINAL_SET:
@@ -175,6 +176,16 @@ def get_select():
             break
 
 
+def get_analysis_table():
+    global ANALYSIS_TABLE
+    for non_terminal in NON_TERMINAL_SET:
+        for p in PRODUCTION_LIST:
+            if non_terminal == p.left:
+                for s in p.select:
+                    d = {s : p}
+                    ANALYSIS_TABLE[non_terminal] = d
+
+
 def syntax_error(msg):
     print(msg)
 
@@ -193,7 +204,8 @@ def main():
     for p in PRODUCTION_LIST:
         print p
 
+    get_analysis_table()
+
 
 if __name__ == '__main__':
     main()
-    
