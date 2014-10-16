@@ -38,6 +38,7 @@ ELSE
 ++
 --
 !
+#
 int
 float
 short
@@ -56,6 +57,7 @@ string
 <stmts>         ::= <stmt> <stmts>
 <stmts>         ::= 
 <compound_stmt> ::= { <define_stmts> <stmts> }
+<define_stmt>	::= <type> ID ;
 <define_stmt>   ::= { <define_stmts> <stmts> }
 <define_stmts>  ::= <define_stmt> <define_stmts>
 <define_stmts>  ::=

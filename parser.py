@@ -1,3 +1,4 @@
+from lexer import current_line, current_row, scanner, read_file
 from util import Production, Symbol
 
 
@@ -11,6 +12,7 @@ PRODUCTION_LIST = []
 
 ANALYSIS_TABLE = {}
 
+SYMBOL_STACK = []
 
 def symbol_for_str(str):
     return SYMBOL_DICT[str]
@@ -18,6 +20,14 @@ def symbol_for_str(str):
 
 def is_terminal(str):
     return str in TERMINAL_SET
+
+
+def syntax_error(msg):
+    if line is None:
+        line = current_line + 1
+    if row is None:
+        row = current_row + 1
+    print(str(line) + ':' + str(row) + ' Syntax error: ' + info)
 
 
 def prepare_symbols_and_productions():
@@ -179,32 +189,65 @@ def get_select():
 def get_analysis_table():
     global ANALYSIS_TABLE
     for non_terminal in NON_TERMINAL_SET:
+        ANALYSIS_TABLE[non_terminal] = {}
         for p in PRODUCTION_LIST:
             if non_terminal == p.left:
                 for s in p.select:
-                    d = {s : p}
-                    ANALYSIS_TABLE[non_terminal] = d
-
-
-def syntax_error(msg):
-    print(msg)
+                    ANALYSIS_TABLE[non_terminal][s] = p
 
 
 def main():
-    # file_name = sys.argv[1]
+    read_file('1.c')
     prepare_symbols_and_productions()
     get_nullable()
     get_first()
     get_follow()
-    for s in NON_TERMINAL_SET:
+    get_select()
+    get_analysis_table()
+
+    """for s in NON_TERMINAL_SET:
         sym = SYMBOL_DICT[s]
         print sym
 
-    get_select()
     for p in PRODUCTION_LIST:
         print p
 
-    get_analysis_table()
+    #print(ANALYSIS_TABLE)
+    """
+    SYMBOL_STACK.append('#')
+    SYMBOL_STACK.append('<s>')
+
+    r = scanner()
+    while r is None:
+        r = scanner()
+
+    while len(SYMBOL_STACK) > 0:
+        l = len(SYMBOL_STACK)
+        X = SYMBOL_STACK[l-1]
+        current_token = r[0]
+        if current_token == 'OP' or current_token == 'SEP':
+            current_token = r[1]
+
+        if current_token == 'SCANEOF':
+            current_token = '#'
+
+        if X == 'null':
+            SYMBOL_STACK.pop()
+            continue
+
+        if X == '#':
+            break
+        if not is_terminal(X):
+            p = ANALYSIS_TABLE[X][current_token]
+            print(p)
+            SYMBOL_STACK.pop()
+            SYMBOL_STACK.extend(reversed(p.right))
+
+        else:
+            SYMBOL_STACK.pop()
+            r = scanner()
+            while r is None:
+                r = scanner()
 
 
 if __name__ == '__main__':

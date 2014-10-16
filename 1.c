@@ -1,12 +1,4 @@
-int a;
-float c;
-double b;
+int main() {
 
-while(c--) {
-    a /= (b - c) * 2;
+int a ;
 }
-
-if (a != b) {
-   c = a + b
-}
-/*Hello

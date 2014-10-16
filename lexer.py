@@ -137,7 +137,7 @@ def lexical_error(info, line=None, row=None):
 def scanner():
     current_char = getchar()
     if current_char == 'SCANEOF':
-        return 'SCANEOF'
+        return ('SCANEOF','','')
     if current_char.strip() == '':
         return
     if current_char.isdigit():
@@ -167,7 +167,7 @@ def scanner():
 
         ungetc()
         if is_keyword(string):
-            return (string, '', get_cate_id(string))
+            return (string.upper(), '', get_cate_id(string))
         else:
             return ('ID', string, get_cate_id('ID'))
 
@@ -187,7 +187,7 @@ def scanner():
 
                 current_line = line
                 current_row = row
-                return 'SCANEOF'
+                return ('SCANEOF','','')
         return('STRING', str_literal, get_cate_id('STRING'))
 
     if current_char == '/':
@@ -200,7 +200,7 @@ def scanner():
             while True:
                 if next_char == 'SCANEOF':
                     lexical_error('unteminated /* comment', line, row)
-                    return 'SCANEOF'
+                    return ('SCANEOF','','')
                 if next_char == '*':
                     end_char = getchar()
                     if end_char == '/':
@@ -208,7 +208,7 @@ def scanner():
                         return None
                     if end_char == 'SCANEOF':
                         lexical_error('unteminated /* comment', line, row)
-                        return 'SCANEOF'
+                        return ('SCANEOF','','')
                 comment += next_char
                 next_char = getchar()
         else:
@@ -240,7 +240,7 @@ def main():
     read_file(file_name)
     while True:
         r = scanner()
-        if r == 'SCANEOF':
+        if r[0] == 'SCANEOF':
             break
         if r is not None:
             print(r)
