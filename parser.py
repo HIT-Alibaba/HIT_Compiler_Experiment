@@ -10,7 +10,7 @@ SYMBOL_DICT = {}
 
 PRODUCTION_LIST = []
 
-ANALYSIS_TABLE = {}
+PARSING_TABLE = {}
 
 SYMBOL_STACK = []
 
@@ -186,14 +186,14 @@ def get_select():
             break
 
 
-def get_analysis_table():
-    global ANALYSIS_TABLE
+def get_parsing_table():
+    global PARSING_TABLE
     for non_terminal in NON_TERMINAL_SET:
-        ANALYSIS_TABLE[non_terminal] = {}
+        PARSING_TABLE[non_terminal] = {}
         for p in PRODUCTION_LIST:
             if non_terminal == p.left:
                 for s in p.select:
-                    ANALYSIS_TABLE[non_terminal][s] = p
+                    PARSING_TABLE[non_terminal][s] = p
 
 
 def main():
@@ -203,7 +203,7 @@ def main():
     get_first()
     get_follow()
     get_select()
-    get_analysis_table()
+    get_parsing_table()
 
     """for s in NON_TERMINAL_SET:
         sym = SYMBOL_DICT[s]
@@ -238,7 +238,7 @@ def main():
         if X == '#' or current_token == '#':
             break
         if not is_terminal(X):
-            p = ANALYSIS_TABLE[X][current_token]
+            p = PARSING_TABLE[X][current_token]
             print(p)
             SYMBOL_STACK.pop()
             SYMBOL_STACK.extend(reversed(p.right))
