@@ -7,11 +7,11 @@ FLOAT
 LONG
 DOUBLE
 SHORT
-WHILE
-IF
-ELSE
+STRING_LITERAL
 ( 
 )
+[
+]
 ,
 ;
 {
@@ -35,46 +35,62 @@ ELSE
 *
 /
 %
+&
+~
 ++
 --
 !
 #
 int
 float
+double
 short
 long
-string
+while
+if 
+else
 *productions
-<s>             ::= <program>
-<program>       ::= <declarations>
-<declarations>  ::= <func_declaration> <declarations>
-<declarations>  ::=
-<func_declaration>::= <type> ID ( ) <compound_stmt>
+<s>             ::= <translation_unit>
+<translation_unit> ::= <external_declaration> <translation_unit>
+<external_declaration> ::= <func_declaration>
+<declaration> ::= <declaration_specifiers> <init_declarator> ;
+<init_declarator> ::= 
+<init_declarator> ::= <initializer>
+<initializer> ::= <assignment_expression>
+<initializer> ::= { <initializer_list> }
+<initializer_list> ::= <initializer> , <initializer_list>
+<func_declaration>::= <declaration_specifiers> <declarator> <declaration_list> <compound_stmt>
+<declaration_list> ::=
+<declaration_list> ::= <declaration> <declaration_list>
+<declaration_specifiers> ::= <type_specifier> ID
+<declarator>    ::= ( <parameter_type_list> )
+<declarator>    ::= 
+<parameter_type_list> ::= <parameter_list>
+<parameter_type_list> ::= 
+<parameter_list>    ::= <parameter_declaration>
+<parameter_declaration> ::= <declaration_specifiers> <declarator>
+<parameter_declaration> ::= <declaration_specifiers>
 <stmt>          ::= <compound_stmt>
 <stmt>          ::= <iter_stmt>
 <stmt>          ::= <selection_stmt>
-<stmt>          ::= <expression> ;
-<stmts>         ::= <stmt> <stmts>
-<stmts>         ::= 
-<compound_stmt> ::= { <define_stmts> <stmts> }
-<define_stmt>	::= <type> ID ;
-<define_stmt>   ::= { <define_stmts> <stmts> }
-<define_stmts>  ::= <define_stmt> <define_stmts>
-<define_stmts>  ::=
-<iter_stmt>     ::= WHILE ( <expression> ) <stmt>
-<selection_stmt>::= IF ( <expression> ) <stmt> <else_stmt>
-<else_stmt>     ::= ELSE <stmt> <else_stmt>
-<else_stmt>     ::=
-<type>          ::= INT
-<type>          ::= FLOAT
-<type>          ::= DOUBLE
-<type>          ::= SHORT
-<type>          ::= LONG
-<const>         ::= int
-<const>         ::= float
-<const>         ::= short
-<const>         ::= long
-<const>         ::= string
+<stmt>          ::= <expression_stmt>
+<expression_stmt> ::= ;
+<expression_stmt> ::= <expression> ;
+<compound_stmt> ::= { <stmt_list> }
+<compound_stmt> ::= { <declaration_list> <stmt_list> }
+<stmt_list> ::= 
+<stmt_list> ::= <stmt> <stmt_list>
+<iter_stmt>     ::= while ( <expression> ) <stmt>
+<selection_stmt>::= if ( <expression> ) <stmt> 
+<type_specifier>          ::= int
+<type_specifier>          ::= float
+<type_specifier>          ::= double
+<type_specifier>          ::= short
+<type_specifier>          ::= long
+<constant>         ::= INT
+<constant>         ::= FLOAT
+<constant>         ::= SHORT
+<constant>         ::= LONG
 <compare_op>    ::= >
 <compare_op>    ::= <
 <compare_op>    ::= =
@@ -82,11 +98,29 @@ string
 <compare_op>    ::= <=
 <compare_op>    ::= ==
 <compare_op>    ::= !=
-<arith_op>      ::= +
-<arith_op>      ::= -
-<arith_op>      ::= *
-<arith_op>      ::= /
-<arith_op>      ::= %
-<expression>    ::= ID <arith_op> ID
-*end 
-
+<unary_op>      ::= &
+<unary_op>      ::= *
+<unary_op>      ::= +
+<unary_op>      ::= -
+<unary_op>      ::= ~
+<unary_op>      ::= !
+<assignment_op> ::= =
+<assignment_op> ::= -=
+<assignment_op> ::= +=
+<assignment_op> ::= *=
+<assignment_op> ::= /=
+<assignment_op> ::= %=
+<expression>    ::= <assignment_expression>
+<expression>    ::= <compare_expression>
+<expression>    ::= <primary_expression>
+<compare_expression> ::= <expression> <compare_op> <expression>
+<assignment_expression>::= <assignment_op> <unary_expression>
+<primary_expression> ::= ID
+<primary_expression> ::= <constant>
+<primary_expression> ::= STRING_LITERAL
+<primary_expression> ::= ( <expression> )
+<unary_expression> ::= <primary_expression>
+<unary_expression> ::= ++ <unary_expression>
+<unary_expression> ::= -- <unary_expression>
+<unary_expression> ::= <unary_op> <unary_expression>
+*end

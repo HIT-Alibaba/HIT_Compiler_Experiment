@@ -235,7 +235,7 @@ def main():
             SYMBOL_STACK.pop()
             continue
 
-        if X == '#':
+        if X == '#' or current_token == '#':
             break
         if not is_terminal(X):
             p = ANALYSIS_TABLE[X][current_token]

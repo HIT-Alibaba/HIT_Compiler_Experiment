@@ -1,4 +1,11 @@
 int main() {
-
-int a ;
+    int a = 3;
+    float b = 78.09;
+    double c = a + b;
+    if (a > b) {
+        c = a + 1;
+    }
+    if ( a > b) {
+        b = a + 1;
+    }
 }

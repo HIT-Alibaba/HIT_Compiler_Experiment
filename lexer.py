@@ -167,7 +167,7 @@ def scanner():
 
         ungetc()
         if is_keyword(string):
-            return (string.upper(), '', get_cate_id(string))
+            return (string, '', get_cate_id(string))
         else:
             return ('ID', string, get_cate_id('ID'))
 
@@ -188,7 +188,7 @@ def scanner():
                 current_line = line
                 current_row = row
                 return ('SCANEOF','','')
-        return('STRING', str_literal, get_cate_id('STRING'))
+        return('STRING_LITERAL', str_literal, get_cate_id('STRING'))
 
     if current_char == '/':
         next_char = getchar()
