@@ -14,6 +14,7 @@ PARSING_TABLE = {}
 
 SYMBOL_STACK = []
 
+
 def symbol_for_str(str):
     return SYMBOL_DICT[str]
 
@@ -85,7 +86,8 @@ def get_nullable():
                 else:
                     right_is_nullable = symbol_for_str(p.right[0]).is_nullable
                     for r in p.right[1:]:
-                        right_is_nullable = right_is_nullable & symbol_for_str(r).is_nullable
+                        right_is_nullable = right_is_nullable & symbol_for_str(
+                            r).is_nullable
 
                     if right_is_nullable:
                         changes = True
@@ -202,6 +204,7 @@ def next_token():
         r = scanner()
     return r
 
+
 def prepare_grammar():
     prepare_symbols_and_productions()
     get_nullable()
@@ -209,6 +212,7 @@ def prepare_grammar():
     get_follow()
     get_select()
     get_parsing_table()
+
 
 def do_parsing():
     SYMBOL_STACK.append('#')
@@ -218,7 +222,7 @@ def do_parsing():
 
     while len(SYMBOL_STACK) > 0:
         l = len(SYMBOL_STACK)
-        X = SYMBOL_STACK[l-1]
+        X = SYMBOL_STACK[l - 1]
         current_token = token_tuple[0]
         if current_token == 'OP' or current_token == 'SEP':
             current_token = token_tuple[1]
@@ -241,6 +245,7 @@ def do_parsing():
         else:
             SYMBOL_STACK.pop()
             token_tuple = next_token()
+
 
 def main():
     read_source_file('1.c')
