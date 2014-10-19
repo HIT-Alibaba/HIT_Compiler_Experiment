@@ -119,7 +119,7 @@ def ungetc():
     return input_str[current_line][current_row]
 
 
-def read_file(file):
+def read_source_file(file):
     global input_str
     f = open(file, 'r')
     input_str = f.readlines()
@@ -237,7 +237,7 @@ def scanner():
             
 def main():
     file_name = sys.argv[1]
-    read_file(file_name)
+    read_source_file(file_name)
     while True:
         r = scanner()
         if r[0] == 'SCANEOF':

@@ -1,4 +1,4 @@
-from lexer import current_line, current_row, scanner, read_file
+from lexer import current_line, current_row, scanner, read_source_file
 from util import Production, Symbol
 
 
@@ -196,8 +196,13 @@ def get_parsing_table():
                     PARSING_TABLE[non_terminal][s] = p
 
 
-def main():
-    read_file('1.c')
+def next_token():
+    r = scanner()
+    while r is None:
+        r = scanner()
+    return r
+
+def prepare_grammar():
     prepare_symbols_and_productions()
     get_nullable()
     get_first()
@@ -205,28 +210,18 @@ def main():
     get_select()
     get_parsing_table()
 
-    """for s in NON_TERMINAL_SET:
-        sym = SYMBOL_DICT[s]
-        print sym
-
-    for p in PRODUCTION_LIST:
-        print p
-
-    #print(ANALYSIS_TABLE)
-    """
+def do_parsing():
     SYMBOL_STACK.append('#')
     SYMBOL_STACK.append('<s>')
 
-    r = scanner()
-    while r is None:
-        r = scanner()
+    token_tuple = next_token()
 
     while len(SYMBOL_STACK) > 0:
         l = len(SYMBOL_STACK)
         X = SYMBOL_STACK[l-1]
-        current_token = r[0]
+        current_token = token_tuple[0]
         if current_token == 'OP' or current_token == 'SEP':
-            current_token = r[1]
+            current_token = token_tuple[1]
 
         if current_token == 'SCANEOF':
             current_token = '#'
@@ -245,10 +240,12 @@ def main():
 
         else:
             SYMBOL_STACK.pop()
-            r = scanner()
-            while r is None:
-                r = scanner()
+            token_tuple = next_token()
 
+def main():
+    read_source_file('1.c')
+    prepare_grammar()
+    do_parsing()
 
 if __name__ == '__main__':
     main()
