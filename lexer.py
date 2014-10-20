@@ -97,10 +97,10 @@ def get_cate_id(s):
 def getchar():
     global current_row
     global current_line
-    current_row = current_row + 1
+    current_row += 1
 
     if current_row == len(input_str[current_line]):
-        current_line = current_line + 1
+        current_line += 1
         current_row = 0
 
     if current_line == len(input_str):
@@ -126,12 +126,12 @@ def read_source_file(file):
     f.close()
 
 
-def lexical_error(info, line=None, row=None):
+def lexical_error(msg, line=None, row=None):
     if line is None:
         line = current_line + 1
     if row is None:
         row = current_row + 1
-    print(str(line) + ':' + str(row) + ' Lexical error: ' + info)
+    print(str(line) + ':' + str(row) + ' Lexical error: ' + msg)
 
 
 def scanner():

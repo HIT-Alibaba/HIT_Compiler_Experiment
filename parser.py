@@ -1,4 +1,5 @@
-from lexer import current_line, current_row, scanner, read_source_file
+import lexer
+
 from util import Production, Symbol
 
 
@@ -23,12 +24,12 @@ def is_terminal(str):
     return str in TERMINAL_SET
 
 
-def syntax_error(msg):
+def syntax_error(msg, line=None, row=None):
     if line is None:
-        line = current_line + 1
+        line = lexer.current_line + 1
     if row is None:
-        row = current_row + 1
-    print(str(line) + ':' + str(row) + ' Syntax error: ' + info)
+        row = lexer.current_row + 1
+    print(str(line) + ':' + str(row) + ' Syntax error: ' + msg)
 
 
 def prepare_symbols_and_productions():
@@ -199,9 +200,9 @@ def get_parsing_table():
 
 
 def next_token():
-    r = scanner()
+    r = lexer.scanner()
     while r is None:
-        r = scanner()
+        r = lexer.scanner()
     return r
 
 
@@ -219,8 +220,10 @@ def do_parsing():
     SYMBOL_STACK.append('<s>')
 
     token_tuple = next_token()
-
+    productions = open('productions.txt', 'w')
+    stack = open('stack.txt', 'w')
     while len(SYMBOL_STACK) > 0:
+        stack.write(str(SYMBOL_STACK) + '\n')
         l = len(SYMBOL_STACK)
         X = SYMBOL_STACK[l - 1]
         current_token = token_tuple[0]
@@ -237,8 +240,11 @@ def do_parsing():
         if X == '#' or current_token == '#':
             break
         if not is_terminal(X):
-            p = PARSING_TABLE[X][current_token]
-            print(p)
+            try:
+                p = PARSING_TABLE[X][current_token]
+            except KeyError:
+                syntax_error('unmatched')
+            productions.write(str(p) + '\n')
             SYMBOL_STACK.pop()
             SYMBOL_STACK.extend(reversed(p.right))
 
@@ -246,10 +252,12 @@ def do_parsing():
             SYMBOL_STACK.pop()
             token_tuple = next_token()
 
+    productions.close()
+    stack.close()
 
 def main():
-    read_source_file('1.c')
     prepare_grammar()
+    lexer.read_source_file('1.c')
     do_parsing()
 
 if __name__ == '__main__':
