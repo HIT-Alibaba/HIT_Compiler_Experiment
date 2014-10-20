@@ -52,6 +52,7 @@ else
 *productions
 <s>             ::= <translation_unit>
 <translation_unit> ::= <external_declaration> <translation_unit>
+<translation_unit> ::=
 <external_declaration> ::= <func_declaration>
 <declaration> ::= <declaration_specifiers> <init_declarator> ;
 <init_declarator> ::= 

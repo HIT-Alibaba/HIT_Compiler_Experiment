@@ -237,8 +237,9 @@ def do_parsing():
             SYMBOL_STACK.pop()
             continue
 
-        if X == '#' or current_token == '#':
+        if X == '#':
             break
+
         if not is_terminal(X):
             try:
                 p = PARSING_TABLE[X][current_token]
