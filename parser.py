@@ -225,7 +225,7 @@ def do_parsing():
     while len(SYMBOL_STACK) > 0:
         stack.write(str(SYMBOL_STACK) + '\n')
         l = len(SYMBOL_STACK)
-        X = SYMBOL_STACK[l - 1]
+        stack_top_symbol = SYMBOL_STACK[l - 1]
         current_token = token_tuple[0]
         if current_token == 'OP' or current_token == 'SEP':
             current_token = token_tuple[1]
@@ -233,16 +233,16 @@ def do_parsing():
         if current_token == 'SCANEOF':
             current_token = '#'
 
-        if X == 'null':
+        if stack_top_symbol == 'null':
             SYMBOL_STACK.pop()
             continue
 
-        if X == '#':
+        if stack_top_symbol == '#':
             break
 
-        if not is_terminal(X):
+        if not is_terminal(stack_top_symbol):
             try:
-                p = PARSING_TABLE[X][current_token]
+                p = PARSING_TABLE[stack_top_symbol][current_token]
             except KeyError:
                 syntax_error('unmatched')
             productions.write(str(p) + '\n')
