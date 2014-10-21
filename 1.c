@@ -6,9 +6,9 @@ int main() {
     if (a > b) {
         c = a + 1;
     }
-    if ( a > b) {
+    if () {
         b = a + 1;
-    }我
+    }
 }
 
 int func1 () {

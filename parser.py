@@ -222,8 +222,22 @@ def get_parsing_table():
         PARSING_TABLE[non_terminal] = {}
         for p in PRODUCTION_LIST:
             if non_terminal == p.left:
-                for s in p.select:
-                    PARSING_TABLE[non_terminal][s] = p
+                for symbol in p.select:
+                    PARSING_TABLE[non_terminal][symbol] = p
+        # Calculate SYNC
+        for symbol in symbol_for_str(non_terminal).follow_set:
+            if is_terminal(symbol):
+                try:
+                    p = PARSING_TABLE[non_terminal][symbol]
+                except KeyError:
+                    PARSING_TABLE[non_terminal][symbol] = 'SYNC'
+
+        for symbol in symbol_for_str(non_terminal).first_set:
+            if is_terminal(symbol):
+                try:
+                    p = PARSING_TABLE[non_terminal][symbol]
+                except KeyError:
+                    PARSING_TABLE[non_terminal][symbol] = 'SYNC'
 
 
 def next_token():
@@ -270,7 +284,19 @@ def do_parsing():
             try:
                 p = PARSING_TABLE[stack_top_symbol][current_token]
             except KeyError:
+                # Stack top symbol unmatched, ignore it
                 syntax_error('unmatched')
+                token_tuple = next_token()
+                continue
+
+            if p == 'SYNC':
+                # SYNC recognized, pop Stack
+                syntax_error("sync symbol, recovering")
+                SYMBOL_STACK.pop()
+                print(str(SYMBOL_STACK))
+                productions.write(str(p) + '\n')
+                continue
+
             productions.write(str(p) + '\n')
             SYMBOL_STACK.pop()
             SYMBOL_STACK.extend(reversed(p.right))
@@ -281,6 +307,7 @@ def do_parsing():
 
     productions.close()
     stack.close()
+
 
 def main():
     prepare_grammar()
