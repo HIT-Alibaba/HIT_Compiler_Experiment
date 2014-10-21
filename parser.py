@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import lexer
 
 from util import Production, Symbol
@@ -74,7 +76,10 @@ def prepare_symbols_and_productions():
 
 
 def get_nullable():
-    # init is_nullable
+    """
+    Calculate and mark non-terminals found that is nullable(can derive null).
+    We do this first, so we can use the result when calculating First and Follow.
+    """
     changes = True
     while changes:
         changes = False
@@ -86,6 +91,7 @@ def get_nullable():
                     continue
                 else:
                     right_is_nullable = symbol_for_str(p.right[0]).is_nullable
+                    # For X -> Y1 ... YN, Nullable(X) = Nullable(Y1) & Nullable(Y2) ... & Nullable(YN)
                     for r in p.right[1:]:
                         right_is_nullable = right_is_nullable & symbol_for_str(
                             r).is_nullable
@@ -96,7 +102,11 @@ def get_nullable():
 
 
 def get_first():
+    """
+    Calculate First set of each symbol.
+    """
     for s in TERMINAL_SET:
+        # For each terminal, initialize First with itself.
         sym = SYMBOL_DICT[s]
         sym.first_set = set([s])
 
@@ -117,8 +127,11 @@ def get_first():
             previous_first_set = set(sym_left.first_set)
 
             for s in p.right:
+                # For X -> Y..., First(X) = First(X) U First(Y)
                 sym_right = symbol_for_str(s)
                 sym_left.first_set.update(sym_right.first_set)
+                # For X -> Y1 Y2 ... Yi-1 , if Y1...Yi-1 is all nullable
+                # Then First(X) = First(X) U First(Y1) U First(Y2) ... 
                 if sym_right.is_nullable:
                     continue
                 else:
@@ -132,6 +145,9 @@ def get_first():
 
 
 def get_follow():
+    """
+    Calculate Follow set of each symbol.
+    """
     for s in NON_TERMINAL_SET:
         sym = symbol_for_str(s)
         sym.follow_set = set()
@@ -153,6 +169,7 @@ def get_follow():
                 previous_follow_set = set(current_symbol.follow_set)
                 next_is_nullable = True
                 for s2 in p.right[p.right.index(s) + 1:]:
+                    # For X -> sYt, Follow(Y) = Follow(Y) U First(t)
                     next_symbol = symbol_for_str(s2)
                     current_symbol.follow_set.update(next_symbol.first_set)
                     if next_symbol.is_nullable:
@@ -161,6 +178,7 @@ def get_follow():
                         next_is_nullable = False
                         break
                 if next_is_nullable:
+                    # For X -> sYt, if t is nullable, Follow(Y) = Follow(Y) U Follow(X)
                     current_symbol.follow_set.update(sym_left.follow_set)
 
                 if current_symbol.follow_set != previous_follow_set:
@@ -171,16 +189,22 @@ def get_follow():
 
 
 def get_select():
+    """
+    Calculate Select set for each production.
+    """
     while True:
         select_set_is_stable = True
         for p in PRODUCTION_LIST:
             sym_left = symbol_for_str(p.left)
             previous_select = set(p.select)
             if p.right[0] == 'null':
+                # For A -> a, if a is null, Select(i) = Follow(A)
                 p.select.update(sym_left.follow_set)
                 continue
             sym_right = symbol_for_str(p.right[0])
+            # Otherwise, Select(i) = First(a)
             p.select.update(sym_right.first_set)
+            # If a is nullable, Select(i) = First(a) U Follow(A)
             if sym_right.is_nullable:
                 p.select.update(sym_right.first_set.union(sym_left.follow_set))
             if previous_select != p.select:
@@ -190,6 +214,9 @@ def get_select():
 
 
 def get_parsing_table():
+    """
+    Calculate parsing table.
+    """
     global PARSING_TABLE
     for non_terminal in NON_TERMINAL_SET:
         PARSING_TABLE[non_terminal] = {}
@@ -224,8 +251,7 @@ def do_parsing():
     stack = open('stack.txt', 'w')
     while len(SYMBOL_STACK) > 0:
         stack.write(str(SYMBOL_STACK) + '\n')
-        l = len(SYMBOL_STACK)
-        stack_top_symbol = SYMBOL_STACK[l - 1]
+        stack_top_symbol = SYMBOL_STACK[-1]
         current_token = token_tuple[0]
         if current_token == 'OP' or current_token == 'SEP':
             current_token = token_tuple[1]
