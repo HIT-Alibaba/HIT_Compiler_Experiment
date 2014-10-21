@@ -18,12 +18,12 @@ PARSING_TABLE = {}
 SYMBOL_STACK = []
 
 
-def symbol_for_str(str):
-    return SYMBOL_DICT[str]
+def symbol_for_str(string):
+    return SYMBOL_DICT[string]
 
 
-def is_terminal(str):
-    return str in TERMINAL_SET
+def is_terminal(string):
+    return string in TERMINAL_SET
 
 
 def syntax_error(msg, line=None, row=None):
@@ -91,7 +91,8 @@ def get_nullable():
                     continue
                 else:
                     right_is_nullable = symbol_for_str(p.right[0]).is_nullable
-                    # For X -> Y1 ... YN, Nullable(X) = Nullable(Y1) & Nullable(Y2) ... & Nullable(YN)
+                    # For X -> Y1 ... YN, Nullable(X) = Nullable(Y1) &
+                    # Nullable(Y2) ... & Nullable(YN)
                     for r in p.right[1:]:
                         right_is_nullable = right_is_nullable & symbol_for_str(
                             r).is_nullable
@@ -131,7 +132,7 @@ def get_first():
                 sym_right = symbol_for_str(s)
                 sym_left.first_set.update(sym_right.first_set)
                 # For X -> Y1 Y2 ... Yi-1 , if Y1...Yi-1 is all nullable
-                # Then First(X) = First(X) U First(Y1) U First(Y2) ... 
+                # Then First(X) = First(X) U First(Y1) U First(Y2) ...
                 if sym_right.is_nullable:
                     continue
                 else:
@@ -178,7 +179,8 @@ def get_follow():
                         next_is_nullable = False
                         break
                 if next_is_nullable:
-                    # For X -> sYt, if t is nullable, Follow(Y) = Follow(Y) U Follow(X)
+                    # For X -> sYt, if t is nullable, Follow(Y) = Follow(Y) U
+                    # Follow(X)
                     current_symbol.follow_set.update(sym_left.follow_set)
 
                 if current_symbol.follow_set != previous_follow_set:
@@ -293,7 +295,6 @@ def do_parsing():
                 # SYNC recognized, pop Stack
                 syntax_error("sync symbol, recovering")
                 SYMBOL_STACK.pop()
-                print(str(SYMBOL_STACK))
                 productions.write(str(p) + '\n')
                 continue
 
