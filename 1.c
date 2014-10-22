@@ -6,7 +6,7 @@ int main() {
     if (a > b) {
         c = a + 1;
     }
-    if () {
+    if (b) {
         b = a + 1;
     }
 }

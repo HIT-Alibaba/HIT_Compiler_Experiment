@@ -6,7 +6,8 @@ class Production(object):
         
     def __str__(self):
         return self.left + ' -> ' + str(self.right) + ' Select: ' + str(self.select)
-        
+
+
 class Symbol(object):
     def __init__(self, symbol, first_set=None, follow_set=None, sym_type='N'):
         self.symbol = symbol

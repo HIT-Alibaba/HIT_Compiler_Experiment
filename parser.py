@@ -241,6 +241,19 @@ def get_parsing_table():
                 except KeyError:
                     PARSING_TABLE[non_terminal][symbol] = 'SYNC'
 
+    prettyprint_parsing_table()
+
+
+def prettyprint_parsing_table():
+    for non_terminal in PARSING_TABLE.keys():
+        symbol_to_production_list = []
+        for symbol in PARSING_TABLE[non_terminal]:
+            p = PARSING_TABLE[non_terminal][symbol]
+            symbol_to_production = str(symbol) + ':' + str(p)
+            symbol_to_production_list.append(symbol_to_production)
+
+        print(non_terminal)
+        print(symbol_to_production_list)
 
 def next_token():
     r = lexer.scanner()
@@ -266,7 +279,6 @@ def do_parsing():
     productions = open('productions.txt', 'w')
     stack = open('stack.txt', 'w')
     while len(SYMBOL_STACK) > 0:
-        stack.write(str(SYMBOL_STACK) + '\n')
         stack_top_symbol = SYMBOL_STACK[-1]
         current_token = token_tuple[0]
         if current_token == 'OP' or current_token == 'SEP':
@@ -295,9 +307,11 @@ def do_parsing():
                 # SYNC recognized, pop Stack
                 syntax_error("sync symbol, recovering")
                 SYMBOL_STACK.pop()
+                stack.write(str(SYMBOL_STACK) + '\n')
                 productions.write(str(p) + '\n')
                 continue
 
+            stack.write(str(SYMBOL_STACK) + '\n')
             productions.write(str(p) + '\n')
             SYMBOL_STACK.pop()
             SYMBOL_STACK.extend(reversed(p.right))
