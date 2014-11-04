@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import string
 import lexer
 
 from util import Production, Symbol, Entry
@@ -77,7 +76,7 @@ def P41():
 def P42():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
     f.attr['type'] = 'float'
-    f.attr['value'] = string.atof(f.children[0].lexical_value)
+    f.attr['value'] = float(f.children[0].lexical_value)
 
 def P43():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
