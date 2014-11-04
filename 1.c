@@ -1,14 +1,13 @@
 int main() {
-    int a = 3;
-    float b = 78.09;
-    double d;
-    double c = a + b;
-    if (a > b) {
-        c = a + 1;
+    int a;
+    float b;
+    int c;
+    c = 90;
+    if(c) {
+        a = 1;
+        b = 10.9;
     }
-    if (b) {
-        b = a + 1;
-    }
+    b = 1.11;
 }
 
 int func1 () {

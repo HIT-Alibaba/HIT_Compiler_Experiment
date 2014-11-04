@@ -54,7 +54,7 @@ else
 <translation_unit> ::= <external_declaration> <translation_unit>
 <translation_unit> ::=
 <external_declaration> ::= <func_declaration>
-<declaration> ::= <declaration_specifiers> <init_declarator> ;
+<declaration> ::= <declaration_specifiers> P21 ;
 <init_declarator> ::= 
 <init_declarator> ::= <initializer>
 <initializer> ::= <assignment_expression>
@@ -62,8 +62,8 @@ else
 <initializer_list> ::= <initializer> , <initializer_list>
 <func_declaration>::= <declaration_specifiers> <declarator> <declaration_list> <compound_stmt>
 <declaration_list> ::=
-<declaration_list> ::= <declaration> <declaration_list>
-<declaration_specifiers> ::= <type_specifier> ID
+<declaration_list> ::= <declaration> P22 <declaration_list>
+<declaration_specifiers> ::= <type_specifier> ID P31
 <declarator>    ::= ( <parameter_type_list> )
 <declarator>    ::= 
 <parameter_type_list> ::= <parameter_list>
@@ -82,19 +82,19 @@ else
 <stmt_list> ::= 
 <stmt_list> ::= <stmt> <stmt_list>
 <iter_stmt>     ::= while ( <expression> ) <stmt>
-<selection_stmt>::= if ( <expression> ) <stmt> 
-<type_specifier>          ::= int
-<type_specifier>          ::= float
-<type_specifier>          ::= double
-<type_specifier>          ::= short
-<type_specifier>          ::= long
-<constant>         ::= INT
-<constant>         ::= FLOAT
-<constant>         ::= SHORT
-<constant>         ::= LONG
+<selection_stmt>::= if ( <primary_expression> ) P81 <stmt> P82
+<type_specifier>          ::= int P11
+<type_specifier>          ::= float P12
+<type_specifier>          ::= double P13
+<type_specifier>          ::= short P14
+<type_specifier>          ::= long P15
+<constant>         ::= INT P41
+<constant>         ::= FLOAT P42
+<constant>         ::= SHORT P43
+<constant>         ::= LONG P44
 <compare_op>    ::= >
 <compare_op>    ::= <
-<compare_op>    ::= =
+<compare_op>    ::= ==
 <compare_op>    ::= >=
 <compare_op>    ::= <=
 <compare_op>    ::= ==
@@ -111,17 +111,16 @@ else
 <assignment_op> ::= *=
 <assignment_op> ::= /=
 <assignment_op> ::= %=
-<expression>    ::= <assignment_expression>
-<expression>    ::= <compare_expression>
-<expression>    ::= <primary_expression>
-<compare_expression> ::= <expression> <compare_op> <expression>
-<assignment_expression>::= <assignment_op> <unary_expression>
-<primary_expression> ::= ID
-<primary_expression> ::= <constant>
+<expression>    ::= ID = <unary_expression> P61
+<compare_expression> ::= <primary_expression> <compare_op> <primary_expression>
+<assignment_expression>::= += <unary_expression>
+<assignment_expression>::= -= <unary_expression>
+<primary_expression> ::= ID P51
+<primary_expression> ::= <constant> P52
 <primary_expression> ::= STRING_LITERAL
 <primary_expression> ::= ( <expression> )
-<unary_expression> ::= <primary_expression>
-<unary_expression> ::= ++ <unary_expression>
-<unary_expression> ::= -- <unary_expression>
+<unary_expression> ::= <primary_expression> P71
+<unary_expression> ::= ++ <unary_expression> P72
+<unary_expression> ::= -- <unary_expression> P73
 <unary_expression> ::= <unary_op> <unary_expression>
 *end
