@@ -81,7 +81,7 @@ else
 <compound_stmt> ::= { <declaration_list> <stmt_list> }
 <stmt_list> ::= 
 <stmt_list> ::= <stmt> <stmt_list>
-<iter_stmt>     ::= while ( <expression> ) <stmt>
+<iter_stmt>     ::= while ( <primary_expression> ) P91 <stmt> P92
 <selection_stmt>::= if ( <primary_expression> ) P81 <stmt> P82
 <type_specifier>          ::= int P11
 <type_specifier>          ::= float P12
@@ -111,7 +111,10 @@ else
 <assignment_op> ::= *=
 <assignment_op> ::= /=
 <assignment_op> ::= %=
-<expression>    ::= ID = <unary_expression> P61
+<expression>    ::= ID = <unary_expression> P62 <factor_expression> P61
+<factor_expression> ::=
+<factor_expression> ::= + <unary_expression> P101
+<factor_expression> ::= * <unary_expression> P102
 <compare_expression> ::= <primary_expression> <compare_op> <primary_expression>
 <assignment_expression>::= += <unary_expression>
 <assignment_expression>::= -= <unary_expression>

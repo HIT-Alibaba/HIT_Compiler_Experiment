@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import string
 import lexer
 
 from util import Production, Symbol, Entry
@@ -76,7 +77,7 @@ def P41():
 def P42():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
     f.attr['type'] = 'float'
-    f.attr['value'] = f.children[0].lexical_value
+    f.attr['value'] = string.atof(f.children[0].lexical_value)
 
 def P43():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
@@ -97,9 +98,14 @@ def P52():
     f.attr['value'] = f.children[0].attr['value']
 
 def P61():
-    f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father.father
+    f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
+    if len(f.children) < 3:
+        f = f.father.father.father.father
+
     l = f.children[0]
     r = f.children[2]
+
+    fac = f.children[4]
 
     lv = search_for_symbol(l.lexical_value)
     if lv is None:
@@ -110,7 +116,23 @@ def P61():
         syntax_error('type mismatch')
         return
 
-    code_output(lv.name + ' := ' + str(r.attr['value']))
+    result = None
+    if 'op' in fac.attr:
+        if fac.attr['op'] == '+':
+            result = f.attr['value'] + fac.attr['factor']
+
+        if fac.attr['op'] == '*':
+            result = f.attr['value'] * fac.attr['factor']
+    else:
+        result = r.attr['value']
+    fac.attr = {}
+
+    code_output(lv.name + ' := ' + str(result))
+
+def P62():
+    f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father.father
+    f.attr['type'] = f.children[2].attr['type']
+    f.attr['value'] = f.children[2].attr['value']
 
 def P71():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father
@@ -137,9 +159,36 @@ def P81():
     f.attr['back'] = CODE_SIZE-1
 
 def P82():
-    print(CURRENT_CONDITION_NODE)
     prev = CURRENT_CONDITION_NODE.attr['back']
     CODE_RESULT[prev] = 'GOTO ' + str(CODE_SIZE)
+
+def P91():
+    global CURRENT_CONDITION_NODE
+    f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
+    CURRENT_CONDITION_NODE = f
+    e = f.children[2]
+    code_output('IF ' + str(e.attr['value']) + ' GOTO ' + str(CODE_SIZE+2))
+    code_output(None)
+    f.attr['back'] = CODE_SIZE-1
+
+def P92():
+    prev = CURRENT_CONDITION_NODE.attr['back']
+    CODE_RESULT[prev] = 'GOTO ' + str(CODE_SIZE+1)
+    code_output('GOTO ' + str(prev-1))
+
+def P101():
+    f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father.father
+    f.attr['op'] = f.children[0].lexical_value
+    f.attr['factor'] = f.children[1].attr['value']
+
+def P102():
+    f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father.father
+    f.attr['op'] = f.children[0].lexical_value
+    f.attr['factor'] = f.children[1].attr['value']
+
+
+def no_action():
+    pass
 
 SEMA_ACTION_TABLE['P11'] = P11
 SEMA_ACTION_TABLE['P12'] = P12
@@ -156,11 +205,19 @@ SEMA_ACTION_TABLE['P44'] = P44
 SEMA_ACTION_TABLE['P51'] = P51
 SEMA_ACTION_TABLE['P52'] = P52
 SEMA_ACTION_TABLE['P61'] = P61
+SEMA_ACTION_TABLE['P62'] = P62
 SEMA_ACTION_TABLE['P71'] = P71
 SEMA_ACTION_TABLE['P72'] = P72
 SEMA_ACTION_TABLE['P73'] = P73
 SEMA_ACTION_TABLE['P81'] = P81
 SEMA_ACTION_TABLE['P82'] = P82
+SEMA_ACTION_TABLE['P91'] = P91
+SEMA_ACTION_TABLE['P92'] = P92
+SEMA_ACTION_TABLE['P101'] = P101
+SEMA_ACTION_TABLE['P102'] = P102
+
+SEMA_ACTION_TABLE['null'] = no_action
+
 
 def symbol_for_str(string):
     return SYMBOL_DICT[string]
@@ -422,7 +479,7 @@ def print_symbol_table():
 
 def print_code_result():
     for r in CODE_RESULT:
-        print(r)
+        print(str(CODE_RESULT.index(r)) + ': ' + r)
 
 def next_token():
     r = lexer.scanner()
@@ -452,6 +509,10 @@ def do_parsing():
     stack = open('stack.txt', 'w')
     while len(SYMBOL_STACK) > 0:
         stack_top_symbol = SYMBOL_STACK[-1]
+        while stack_top_symbol == 'null':
+            SYMBOL_STACK.pop()
+            stack_top_symbol = SYMBOL_STACK[-1]
+
         if stack_top_symbol.startswith('P'):
             do_sema_actions(stack_top_symbol)
             SYMBOL_STACK.pop()
