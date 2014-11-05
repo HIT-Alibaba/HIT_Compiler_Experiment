@@ -32,29 +32,38 @@ current_symbol_index = 0
 
 CURRENT_CONDITION_NODE = None
 
+
 def P11():
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['type'] = 'int'
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['length'] = 4
+
 
 def P12():
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['type'] = 'float'
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['length'] = 4
 
+
 def P13():
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['type'] = 'double'
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['length'] = 8
+
 
 def P14():
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['type'] = 'short'
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['length'] = 2
 
+
 def P15():
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['type'] = 'long'
     symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['length'] = 4
 
+
 def P21():
-    symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['type'] = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.children[0].attr['type']
-    symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['length'] = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.children[0].attr['length']
+    symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['type'] = \
+    symbol_for_str(LAST_STACK_TOP_SYMBOL).father.children[0].attr['type']
+    symbol_for_str(LAST_STACK_TOP_SYMBOL).father.attr['length'] = \
+    symbol_for_str(LAST_STACK_TOP_SYMBOL).father.children[0].attr['length']
+
 
 def P22():
     global current_symbol_table_pos
@@ -64,37 +73,45 @@ def P22():
     current_symbol_index += 1
     current_symbol_table_pos += s.attr['length']
 
+
 def P31():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
     f.attr['name'] = f.children[1].lexical_value
+
 
 def P41():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
     f.attr['type'] = 'int'
     f.attr['value'] = f.children[0].lexical_value
 
+
 def P42():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
     f.attr['type'] = 'float'
     f.attr['value'] = float(f.children[0].lexical_value)
+
 
 def P43():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
     f.attr['type'] = 'short'
     f.attr['value'] = f.children[0].lexical_value
 
+
 def P44():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
     f.attr['type'] = 'long'
     f.attr['value'] = f.children[0].lexical_value
 
+
 def P51():
     pass
+
 
 def P52():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father
     f.attr['type'] = f.children[0].attr['type']
     f.attr['value'] = f.children[0].attr['value']
+
 
 def P61():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
@@ -128,57 +145,67 @@ def P61():
 
     code_output(lv.name + ' := ' + str(result))
 
+
 def P62():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father.father
     f.attr['type'] = f.children[2].attr['type']
     f.attr['value'] = f.children[2].attr['value']
+
 
 def P71():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father
     f.attr['type'] = f.children[0].attr['type']
     f.attr['value'] = f.children[0].attr['value']
 
+
 def P72():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father
     f.attr['type'] = f.children[0].attr['type']
     f.attr['value'] = f.children[0].attr['value'] + 1
+
 
 def P73():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father
     f.attr['type'] = f.children[0].attr['type']
     f.attr['value'] = f.children[0].attr['value'] - 1
 
+
 def P81():
     global CURRENT_CONDITION_NODE
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
     CURRENT_CONDITION_NODE = f
     e = f.children[2]
-    code_output('IF ' + str(e.attr['value']) + ' GOTO ' + str(CODE_SIZE+2))
+    code_output('IF ' + str(e.attr['value']) + ' GOTO ' + str(CODE_SIZE + 2))
     code_output(None)
-    f.attr['back'] = CODE_SIZE-1
+    f.attr['back'] = CODE_SIZE - 1
+
 
 def P82():
     prev = CURRENT_CONDITION_NODE.attr['back']
     CODE_RESULT[prev] = 'GOTO ' + str(CODE_SIZE)
+
 
 def P91():
     global CURRENT_CONDITION_NODE
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father
     CURRENT_CONDITION_NODE = f
     e = f.children[2]
-    code_output('IF ' + str(e.attr['value']) + ' GOTO ' + str(CODE_SIZE+2))
+    code_output('IF ' + str(e.attr['value']) + ' GOTO ' + str(CODE_SIZE + 2))
     code_output(None)
-    f.attr['back'] = CODE_SIZE-1
+    f.attr['back'] = CODE_SIZE - 1
+
 
 def P92():
     prev = CURRENT_CONDITION_NODE.attr['back']
-    CODE_RESULT[prev] = 'GOTO ' + str(CODE_SIZE+1)
-    code_output('GOTO ' + str(prev-1))
+    CODE_RESULT[prev] = 'GOTO ' + str(CODE_SIZE + 1)
+    code_output('GOTO ' + str(prev - 1))
+
 
 def P101():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father.father
     f.attr['op'] = f.children[0].lexical_value
     f.attr['factor'] = f.children[1].attr['value']
+
 
 def P102():
     f = symbol_for_str(LAST_STACK_TOP_SYMBOL).father.father.father.father
@@ -188,6 +215,7 @@ def P102():
 
 def no_action():
     pass
+
 
 SEMA_ACTION_TABLE['P11'] = P11
 SEMA_ACTION_TABLE['P12'] = P12
@@ -233,15 +261,18 @@ def syntax_error(msg, line=None, row=None):
         row = lexer.current_row + 1
     print(str(line) + ':' + str(row) + ' Syntax error: ' + msg)
 
+
 def code_output(code):
     global CODE_SIZE
     CODE_SIZE += 1
     CODE_RESULT.append(code)
 
+
 def search_for_symbol(name):
     for e in SYMBOL_TABLE:
         if e.name == name:
             return e
+
 
 def prepare_symbols_and_productions():
     f = open('grammer.txt', 'r')
@@ -458,7 +489,7 @@ def get_parsing_table():
                 except KeyError:
                     PARSING_TABLE[non_terminal][symbol] = 'SYNC'
 
-    #prettyprint_parsing_table()
+                    # prettyprint_parsing_table()
 
 
 def prettyprint_parsing_table():
@@ -472,13 +503,16 @@ def prettyprint_parsing_table():
         print(non_terminal)
         print(symbol_to_production_list)
 
+
 def print_symbol_table():
     for t in SYMBOL_TABLE:
         print(t)
 
+
 def print_code_result():
     for r in CODE_RESULT:
         print(str(CODE_RESULT.index(r)) + ': ' + r)
+
 
 def next_token():
     r = lexer.scanner()
@@ -495,8 +529,10 @@ def prepare_grammar():
     get_select()
     get_parsing_table()
 
+
 def do_sema_actions(symbol):
     SEMA_ACTION_TABLE[symbol]()
+
 
 def do_parsing():
     global LAST_STACK_TOP_SYMBOL
@@ -586,6 +622,7 @@ def main():
     print("CODE")
     print("------------")
     print_code_result()
+
 
 if __name__ == '__main__':
     main()
