@@ -3,7 +3,7 @@ int main() {
     float b;
     int c;
     float e;
-    c = 90;
+    c=10;
     if(c) {
         a = 1 + 10;
         b = 10.9 + 8.9;
