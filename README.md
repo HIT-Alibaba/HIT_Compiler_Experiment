@@ -30,4 +30,7 @@
 
 * https://github.com/zsy112371/bianyi
 
-[MaybeMercy](https://github.com/MaybeMercy/experiment-of-compile)
+[MaybeMercy](https://github.com/MaybeMercy)
+
+* https://github.com/MaybeMercy/experiment-of-compile8
+
