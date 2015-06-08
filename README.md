@@ -19,8 +19,18 @@
 
 * https://github.com/winlandiano/CompilerExp1_lexical_analysis
 * https://github.com/winlandiano/CompilerExp2_Syntax_Analysis
-
+* https://github.com/winlandiano/CompilerExp3_Semantic_Analysis-
 
 [LeechanX](https://github.com/LeechanX)
 
 * https://github.com/LeechanX/My-Compiler-Designer--final-version-
+ 
+
+[zsy112371](https://github.com/zsy112371)
+
+* https://github.com/zsy112371/bianyi
+
+[MaybeMercy](https://github.com/MaybeMercy)
+
+* https://github.com/MaybeMercy/experiment-of-compile8
+
