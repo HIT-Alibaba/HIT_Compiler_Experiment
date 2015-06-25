@@ -32,5 +32,5 @@
 
 [MaybeMercy](https://github.com/MaybeMercy)
 
-* https://github.com/MaybeMercy/experiment-of-compile8
+* https://github.com/MaybeMercy/Compiler_Experiment
 
