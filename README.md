@@ -7,6 +7,7 @@
 
 推荐使用下面学长实现的版本，都是有图形界面的：
 
+**PS:真的可以直接用，不骗你们的，自己写的话肯定收获会比较大，但是得分真的不一定有抄的高！自己写的话，要想得分高，也一定要有图形界面！**
 
  [Macroszh](https://github.com/marcoszh)
 
@@ -17,7 +18,7 @@
 
 [Winlandiano](https://github.com/winlandiano)
 
-* https://github.com/winlandiano/CompilerExp1_lexical_analysis
+* https://github.com/winlandiano/CompilerExp1_lexical_analysis (这个没有图形界面，下面两个有)
 * https://github.com/winlandiano/CompilerExp2_Syntax_Analysis
 * https://github.com/winlandiano/CompilerExp3_Semantic_Analysis-
 
