@@ -241,9 +241,9 @@ def main():
     read_source_file(file_name)
     while True:
         r = scanner()
-        if r[0] == 'SCANEOF':
-            break
         if r is not None:
+            if r[0] == 'SCANEOF':
+                break
             print(r)
 
 if __name__ == '__main__':
