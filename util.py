@@ -3,13 +3,13 @@ class Production(object):
         self.left = left
         self.right = right
         self.select = set()
-        
+
     def __str__(self):
-        return self.left + ' -> ' + str(self.right) + ' Select: ' + str(self.select)
+        return self.left + " -> " + str(self.right) + " Select: " + str(self.select)
 
 
 class Symbol(object):
-    def __init__(self, symbol, first_set=None, follow_set=None, sym_type='N'):
+    def __init__(self, symbol, first_set=None, follow_set=None, sym_type="N"):
         self.symbol = symbol
         self.first_set = first_set
         self.follow_set = follow_set
@@ -19,12 +19,21 @@ class Symbol(object):
         self.father = None
         self.children = []
         self.lexical_value = None
-        
+
     def __str__(self):
-        return self.symbol + ' Derive_empty:' + str(self.is_nullable) + ' First:' + str(self.first_set) + ' Follow:' + str(self.follow_set)
-        
+        return (
+            self.symbol
+            + " Derive_empty:"
+            + str(self.is_nullable)
+            + " First:"
+            + str(self.first_set)
+            + " Follow:"
+            + str(self.follow_set)
+        )
+
     def is_terminal(self):
-        return self.sym_type == 'T'
+        return self.sym_type == "T"
+
 
 class Entry(object):
     def __init__(self, type, length, name):
@@ -33,4 +42,4 @@ class Entry(object):
         self.name = name
 
     def __str__(self):
-        return self.name + ' ' + self.type + ' ' + str(self.length)
+        return self.name + " " + self.type + " " + str(self.length)
